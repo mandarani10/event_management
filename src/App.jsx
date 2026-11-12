@@ -36,134 +36,9 @@ import {
   RotateCcw,
   Check,
   X,
-  Filter
+  Filter,
+  User
 } from 'lucide-react';
-
-// Default initial starter state (stored in localStorage so all user changes persist!)
-const INITIAL_EVENTS = [
-  {
-    id: 1,
-    title: 'InnovateX: Annual Hackathon 2026',
-    club: 'Computing Society',
-    category: 'Technical',
-    date: '2026-09-24',
-    time: '09:00 AM - 08:00 PM',
-    venue: 'Main Auditorium & Labs',
-    registeredCount: 38,
-    capacity: 100,
-    image: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=800&q=80',
-    description: 'Flagship 24-hour campus hackathon bringing together students to solve real-world problems with AI and software.',
-    status: 'Live Registration',
-    budget: 1200,
-    coordinator: 'Lora Piterson'
-  },
-  {
-    id: 2,
-    title: 'AuraFest: Inter-College Cultural Gala',
-    club: 'Music & Arts Guild',
-    category: 'Cultural',
-    date: '2026-09-27',
-    time: '05:30 PM - 11:00 PM',
-    venue: 'Open Air Amphitheatre',
-    registeredCount: 42,
-    capacity: 250,
-    image: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=800&q=80',
-    description: 'An evening of live student bands, classical fusion, beatboxing, and dance performances.',
-    status: 'Trending',
-    budget: 2500,
-    coordinator: 'Devon Vance'
-  }
-];
-
-const INITIAL_CLUBS = [
-  {
-    id: 'c1',
-    name: 'Computing Society',
-    category: 'Technical',
-    leads: 'Lora Piterson',
-    members: 45,
-    avatar: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80',
-    description: 'Focusing on algorithms, open-source projects, web engineering, and competitive coding.',
-    joined: true
-  },
-  {
-    id: 'c2',
-    name: 'Music & Arts Guild',
-    category: 'Cultural',
-    leads: 'Devon Vance',
-    members: 62,
-    avatar: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=400&q=80',
-    description: 'Promoting campus musicians, choir, theatrical productions, and acoustic jam sessions.',
-    joined: false
-  },
-  {
-    id: 'c3',
-    name: 'Entrepreneurship Cell',
-    category: 'Business',
-    leads: 'Priya Sharma',
-    members: 31,
-    avatar: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=400&q=80',
-    description: 'Incubating startup ideas, alumni mentorship sessions, and founder workshops.',
-    joined: false
-  }
-];
-
-const INITIAL_VENUES = [
-  {
-    id: 'v1',
-    name: 'Main Auditorium & Labs',
-    type: 'Indoor Stage',
-    capacity: 400,
-    facilities: ['Dolby Audio', '4K Projector', 'Fiber LAN', 'Stage Lighting']
-  },
-  {
-    id: 'v2',
-    name: 'Open Air Amphitheatre',
-    type: 'Outdoor Arena',
-    capacity: 1200,
-    facilities: ['Acoustic Shell', 'Festival Rigging', 'Spotlights', 'Green Rooms']
-  },
-  {
-    id: 'v3',
-    name: 'Seminar Hall 3',
-    type: 'Conference Room',
-    capacity: 150,
-    facilities: ['Smart Podium', 'Dual Displays', 'Mic Array', 'AC']
-  },
-  {
-    id: 'v4',
-    name: 'Sports Complex Arena',
-    type: 'Indoor Court',
-    capacity: 600,
-    facilities: ['PA Sound', 'High Power Outlets', 'Bleacher Seating']
-  }
-];
-
-const INITIAL_CHECKLIST = [
-  { id: 1, title: 'Sound check & mic sync', time: 'Sep 24, 08:30 AM', done: true },
-  { id: 2, title: 'Guest speaker reception setup', time: 'Sep 24, 10:15 AM', done: false },
-  { id: 3, title: 'Digital pass verification scanner check', time: 'Sep 24, 11:00 AM', done: false },
-];
-
-const INITIAL_BUDGET = [
-  { id: 'b1', item: 'Audio-Visual Sound Rig Rental', club: 'Computing Society', amount: 450, category: 'Production', status: 'Approved' },
-  { id: 'b2', item: 'Hackathon Prize Pool', club: 'Computing Society', amount: 600, category: 'Awards', status: 'Approved' },
-  { id: 'b3', item: 'Stage Lighting & Backdrop', club: 'Music & Arts Guild', amount: 350, category: 'Production', status: 'Pending Review' }
-];
-
-const INITIAL_REVIEWS = [
-  {
-    id: 'r1',
-    eventName: 'InnovateX: Annual Hackathon 2026',
-    reviewer: 'Arjun Mehta',
-    role: 'Student Attendee',
-    rating: 5,
-    date: 'Sep 24, 2026',
-    comment: 'Great infrastructure and stable high-speed WiFi for all participant teams.',
-    likes: 8,
-    liked: false
-  }
-];
 
 export default function App() {
   // Navigation
@@ -171,74 +46,74 @@ export default function App() {
   const [filterCategory, setFilterCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
 
-  // LocalStorage Persisted State
+  // LocalStorage Persisted State (Starting strictly from 0 / Empty)
   const [events, setEvents] = useState(() => {
-    const saved = localStorage.getItem('crextio_events');
-    return saved ? JSON.parse(saved) : INITIAL_EVENTS;
+    const saved = localStorage.getItem('crextio_clean_events');
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [clubs, setClubs] = useState(() => {
-    const saved = localStorage.getItem('crextio_clubs');
-    return saved ? JSON.parse(saved) : INITIAL_CLUBS;
+    const saved = localStorage.getItem('crextio_clean_clubs');
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [venues, setVenues] = useState(() => {
-    const saved = localStorage.getItem('crextio_venues');
-    return saved ? JSON.parse(saved) : INITIAL_VENUES;
+    const saved = localStorage.getItem('crextio_clean_venues');
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [checklist, setChecklist] = useState(() => {
-    const saved = localStorage.getItem('crextio_checklist');
-    return saved ? JSON.parse(saved) : INITIAL_CHECKLIST;
+    const saved = localStorage.getItem('crextio_clean_checklist');
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [budgetItems, setBudgetItems] = useState(() => {
-    const saved = localStorage.getItem('crextio_budget');
-    return saved ? JSON.parse(saved) : INITIAL_BUDGET;
+    const saved = localStorage.getItem('crextio_clean_budget');
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [reviews, setReviews] = useState(() => {
-    const saved = localStorage.getItem('crextio_reviews');
-    return saved ? JSON.parse(saved) : INITIAL_REVIEWS;
+    const saved = localStorage.getItem('crextio_clean_reviews');
+    return saved ? JSON.parse(saved) : [];
   });
 
   const [registeredEvents, setRegisteredEvents] = useState(() => {
-    const saved = localStorage.getItem('crextio_registered');
-    return saved ? JSON.parse(saved) : [1];
+    const saved = localStorage.getItem('crextio_clean_registered');
+    return saved ? JSON.parse(saved) : [];
   });
 
   // Save changes to localStorage
   useEffect(() => {
-    localStorage.setItem('crextio_events', JSON.stringify(events));
+    localStorage.setItem('crextio_clean_events', JSON.stringify(events));
   }, [events]);
 
   useEffect(() => {
-    localStorage.setItem('crextio_clubs', JSON.stringify(clubs));
+    localStorage.setItem('crextio_clean_clubs', JSON.stringify(clubs));
   }, [clubs]);
 
   useEffect(() => {
-    localStorage.setItem('crextio_venues', JSON.stringify(venues));
+    localStorage.setItem('crextio_clean_venues', JSON.stringify(venues));
   }, [venues]);
 
   useEffect(() => {
-    localStorage.setItem('crextio_checklist', JSON.stringify(checklist));
+    localStorage.setItem('crextio_clean_checklist', JSON.stringify(checklist));
   }, [checklist]);
 
   useEffect(() => {
-    localStorage.setItem('crextio_budget', JSON.stringify(budgetItems));
+    localStorage.setItem('crextio_clean_budget', JSON.stringify(budgetItems));
   }, [budgetItems]);
 
   useEffect(() => {
-    localStorage.setItem('crextio_reviews', JSON.stringify(reviews));
+    localStorage.setItem('crextio_clean_reviews', JSON.stringify(reviews));
   }, [reviews]);
 
   useEffect(() => {
-    localStorage.setItem('crextio_registered', JSON.stringify(registeredEvents));
+    localStorage.setItem('crextio_clean_registered', JSON.stringify(registeredEvents));
   }, [registeredEvents]);
 
-  // Timer State (Interactive stopwatch)
+  // Timer State (Interactive stopwatch starting at 00:00)
   const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [timerSeconds, setTimerSeconds] = useState(155);
+  const [timerSeconds, setTimerSeconds] = useState(0);
 
   useEffect(() => {
     let interval = null;
@@ -271,17 +146,19 @@ export default function App() {
   const [selectedEventModal, setSelectedEventModal] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showAddBudgetItemModal, setShowAddBudgetItemModal] = useState(false);
+  const [showAddClubModal, setShowAddClubModal] = useState(false);
+  const [showAddVenueModal, setShowAddVenueModal] = useState(false);
 
   // New Event Form State with Picture Upload
   const [newEvent, setNewEvent] = useState({
     title: '',
-    club: 'Computing Society',
+    club: 'General Campus',
     category: 'Technical',
-    date: '2026-09-24',
+    date: new Date().toISOString().split('T')[0],
     time: '10:00 AM - 04:00 PM',
-    venue: 'Main Auditorium & Labs',
+    venue: 'Main Auditorium',
     capacity: 100,
-    budget: 500,
+    budget: 0,
     description: '',
     image: ''
   });
@@ -320,28 +197,27 @@ export default function App() {
     const created = {
       id: Date.now(),
       title: newEvent.title.trim(),
-      club: newEvent.club,
+      club: newEvent.club || 'General Campus',
       category: newEvent.category,
       date: newEvent.date,
       time: newEvent.time,
       venue: newEvent.venue,
-      registeredCount: 1,
-      capacity: Number(newEvent.capacity) || 100,
+      registeredCount: 0,
+      capacity: Number(newEvent.capacity) || 50,
       image: imagePreview || fallbackImg,
-      description: newEvent.description.trim() || 'Join us for this campus event!',
+      description: newEvent.description.trim() || 'College campus event.',
       status: 'Live Registration',
       budget: Number(newEvent.budget) || 0,
-      coordinator: 'Nixtio (You)'
+      coordinator: 'Student Council'
     };
 
     setEvents([created, ...events]);
 
-    // Also add to budget ledger if budget specified
     if (created.budget > 0) {
       setBudgetItems((prev) => [
         {
           id: `b-${Date.now()}`,
-          item: `${created.title} - Operational Budget`,
+          item: `${created.title} - Budget`,
           club: created.club,
           amount: created.budget,
           category: 'Event Grant',
@@ -351,22 +227,21 @@ export default function App() {
       ]);
     }
 
-    // Reset Form
     setNewEvent({
       title: '',
-      club: clubs[0]?.name || 'Computing Society',
+      club: clubs[0]?.name || 'General Campus',
       category: 'Technical',
-      date: '2026-09-24',
+      date: new Date().toISOString().split('T')[0],
       time: '10:00 AM - 04:00 PM',
-      venue: venues[0]?.name || 'Main Auditorium & Labs',
+      venue: venues[0]?.name || 'Main Auditorium',
       capacity: 100,
-      budget: 500,
+      budget: 0,
       description: '',
       image: ''
     });
     setImagePreview('');
     setShowCreateModal(false);
-    triggerToast('Event Published Successfully 🎉', `${created.title} is now open for registration!`);
+    triggerToast('Event Published', `${created.title} added to the calendar.`);
   };
 
   // RSVP Booking toggle
@@ -379,7 +254,7 @@ export default function App() {
           ev.id === id ? { ...ev, registeredCount: Math.max(0, ev.registeredCount - 1) } : ev
         )
       );
-      triggerToast('Registration Cancelled', 'You have withdrawn your RSVP.');
+      triggerToast('Registration Cancelled', 'You withdrew your RSVP.');
     } else {
       setRegisteredEvents([...registeredEvents, id]);
       setEvents(
@@ -387,7 +262,7 @@ export default function App() {
           ev.id === id ? { ...ev, registeredCount: ev.registeredCount + 1 } : ev
         )
       );
-      triggerToast('RSVP Confirmed 🎉', 'Your digital entry pass is now generated.');
+      triggerToast('RSVP Confirmed 🎉', 'Entry pass booked.');
     }
   };
 
@@ -409,7 +284,7 @@ export default function App() {
     const item = {
       id: Date.now(),
       title: newChecklistText.trim(),
-      time: 'Today',
+      time: 'Just now',
       done: false
     };
     setChecklist([...checklist, item]);
@@ -432,14 +307,10 @@ export default function App() {
       clubs.map((c) => {
         if (c.id === id) {
           const nextJoined = !c.joined;
-          triggerToast(
-            nextJoined ? 'Welcome to the Club!' : 'Left Club',
-            nextJoined ? `You joined ${c.name}` : `You left ${c.name}`
-          );
           return {
             ...c,
             joined: nextJoined,
-            members: nextJoined ? c.members + 1 : c.members - 1
+            members: nextJoined ? c.members + 1 : Math.max(0, c.members - 1)
           };
         }
         return c;
@@ -447,11 +318,62 @@ export default function App() {
     );
   };
 
+  // Add Club Form
+  const [newClubForm, setNewClubForm] = useState({
+    name: '',
+    category: 'Technical',
+    leads: '',
+    description: ''
+  });
+
+  const handleAddClub = (e) => {
+    e.preventDefault();
+    if (!newClubForm.name.trim()) return;
+    const entry = {
+      id: `c-${Date.now()}`,
+      name: newClubForm.name.trim(),
+      category: newClubForm.category,
+      leads: newClubForm.leads.trim() || 'Student Lead',
+      members: 1,
+      avatar: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=400&q=80',
+      description: newClubForm.description.trim() || 'Campus student society.',
+      joined: true
+    };
+    setClubs([...clubs, entry]);
+    setShowAddClubModal(false);
+    setNewClubForm({ name: '', category: 'Technical', leads: '', description: '' });
+    triggerToast('Club Registered', `${entry.name} created!`);
+  };
+
+  // Add Venue Form
+  const [newVenueForm, setNewVenueForm] = useState({
+    name: '',
+    type: 'Auditorium',
+    capacity: 200,
+    facilities: 'Projector, Mic, AC'
+  });
+
+  const handleAddVenue = (e) => {
+    e.preventDefault();
+    if (!newVenueForm.name.trim()) return;
+    const entry = {
+      id: `v-${Date.now()}`,
+      name: newVenueForm.name.trim(),
+      type: newVenueForm.type,
+      capacity: Number(newVenueForm.capacity) || 100,
+      facilities: newVenueForm.facilities.split(',').map((f) => f.trim()).filter(Boolean)
+    };
+    setVenues([...venues, entry]);
+    setShowAddVenueModal(false);
+    setNewVenueForm({ name: '', type: 'Auditorium', capacity: 200, facilities: 'Projector, Mic, AC' });
+    triggerToast('Venue Added', `${entry.name} ready for events.`);
+  };
+
   // Budget Actions
   const [newBudgetItem, setNewBudgetItem] = useState({
     item: '',
-    club: clubs[0]?.name || 'Computing Society',
-    amount: 100,
+    club: 'Student Council',
+    amount: 0,
     category: 'Production'
   });
 
@@ -470,8 +392,8 @@ export default function App() {
     setShowAddBudgetItemModal(false);
     setNewBudgetItem({
       item: '',
-      club: clubs[0]?.name || 'Computing Society',
-      amount: 100,
+      club: 'Student Council',
+      amount: 0,
       category: 'Production'
     });
     triggerToast('Budget Request Logged', 'Awaiting approval.');
@@ -481,12 +403,12 @@ export default function App() {
     setBudgetItems(
       budgetItems.map((b) => (b.id === id ? { ...b, status: 'Approved' } : b))
     );
-    triggerToast('Expense Approved', 'Funds have been disbursed.');
+    triggerToast('Expense Approved', 'Funds disbursed.');
   };
 
   // Reviews
   const [newReviewForm, setNewReviewForm] = useState({
-    eventName: events[0]?.title || '',
+    eventName: '',
     reviewer: 'Nixtio',
     rating: 5,
     comment: ''
@@ -497,8 +419,8 @@ export default function App() {
     if (!newReviewForm.comment.trim()) return;
     const newRev = {
       id: `r-${Date.now()}`,
-      eventName: newReviewForm.eventName || events[0]?.title,
-      reviewer: newReviewForm.reviewer.trim() || 'Campus Student',
+      eventName: newReviewForm.eventName || (events[0]?.title || 'Campus Event'),
+      reviewer: newReviewForm.reviewer.trim() || 'Student Attendee',
       role: 'Student Attendee',
       rating: Number(newReviewForm.rating),
       date: 'Today',
@@ -507,8 +429,8 @@ export default function App() {
       liked: false
     };
     setReviews([newRev, ...reviews]);
-    setNewReviewForm({ ...newReviewForm, comment: '' });
-    triggerToast('Feedback Published', 'Thank you for rating campus events!');
+    setNewReviewForm({ eventName: '', reviewer: 'Nixtio', rating: 5, comment: '' });
+    triggerToast('Feedback Published', 'Thank you for your rating!');
   };
 
   const toggleReviewLike = (id) => {
@@ -522,7 +444,7 @@ export default function App() {
   };
 
   // Calendar State
-  const [selectedCalendarDate, setSelectedCalendarDate] = useState('2026-09-24');
+  const [selectedCalendarDate, setSelectedCalendarDate] = useState(new Date().toISOString().split('T')[0]);
 
   // Filtered Events
   const filteredEvents = events.filter((ev) => {
@@ -534,10 +456,10 @@ export default function App() {
     return matchCat && matchSearch;
   });
 
-  // Dynamic real calculations
+  // Pure 0 calculations (strictly derived from real state)
   const totalRegisteredCount = events.reduce((acc, ev) => acc + (ev.registeredCount || 0), 0);
-  const totalCapacity = events.reduce((acc, ev) => acc + (ev.capacity || 0), 1);
-  const registrationPercentage = Math.min(100, Math.round((totalRegisteredCount / totalCapacity) * 100));
+  const totalCapacity = events.reduce((acc, ev) => acc + (ev.capacity || 0), 0);
+  const registrationPercentage = totalCapacity > 0 ? Math.round((totalRegisteredCount / totalCapacity) * 100) : 0;
 
   const totalClubMembers = clubs.reduce((acc, c) => acc + (c.members || 0), 0);
   const totalApprovedBudget = budgetItems
@@ -545,16 +467,14 @@ export default function App() {
     .reduce((acc, b) => acc + b.amount, 0);
 
   const doneChecklistCount = checklist.filter((c) => c.done).length;
-  const checklistPercentage = checklist.length
-    ? Math.round((doneChecklistCount / checklist.length) * 100)
-    : 0;
+  const checklistPercentage = checklist.length > 0 ? Math.round((doneChecklistCount / checklist.length) * 100) : 0;
 
   return (
     <div className="min-h-screen bg-[#f1f0ea] p-2 sm:p-5 lg:p-8 flex items-center justify-center font-sans antialiased selection:bg-amber-300 selection:text-black">
       
       {/* Toast Notification Alert */}
       {notificationToast && (
-        <div className="fixed top-6 right-6 z-50 bg-[#1b1916] text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-white/10 animate-in fade-in slide-in-from-top-4 duration-200">
+        <div className="fixed top-6 right-6 z-50 bg-[#1b1916] text-white px-5 py-3.5 rounded-2xl shadow-2xl flex items-center gap-3 border border-white/10 animate-in fade-in duration-200">
           <Sparkles className="w-4 h-4 text-[#ffea79]" />
           <div>
             <div className="text-xs font-semibold">{notificationToast.title}</div>
@@ -582,7 +502,7 @@ export default function App() {
             </button>
           </div>
 
-          {/* Navigation Pill Menu (Dashboard, Events, Clubs, Venues, Budget, Calendar, Reviews) */}
+          {/* Navigation Pill Menu */}
           <nav className="flex items-center bg-[#f4f2ea]/80 backdrop-blur-md p-1.5 rounded-full border border-[#e5e1d5] text-sm font-medium overflow-x-auto max-w-full">
             {['Dashboard', 'Events', 'Clubs', 'Venues', 'Budget', 'Calendar', 'Reviews'].map((tab) => {
               const isActive = activeTab === tab;
@@ -649,16 +569,16 @@ export default function App() {
                   </div>
                   <div className="flex items-center gap-2">
                     <span className="text-[#2b2a26] font-semibold text-sm">Project time</span>
-                    {/* Striped progress bar matching image */}
                     <div className="h-8 w-44 rounded-full border border-[#ded9cb] overflow-hidden p-0.5 bg-white/60 flex items-center">
                       <div
-                        className="h-full rounded-full w-[60%] flex items-center justify-center text-[10px] text-amber-950 font-medium"
+                        className="h-full rounded-full flex items-center justify-center text-[10px] text-amber-950 font-medium transition-all duration-300"
                         style={{
+                          width: `${Math.min(100, Math.max(0, timerSeconds > 0 ? 50 : 0))}%`,
                           backgroundImage:
                             'repeating-linear-gradient(45deg, #ded9cb, #ded9cb 4px, #f2efe7 4px, #f2efe7 8px)'
                         }}
                       />
-                      <span className="ml-2 text-xs text-[#6e6a62]">60%</span>
+                      <span className="ml-2 text-xs text-[#6e6a62]">{timerSeconds > 0 ? 'Active' : '0%'}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
@@ -697,32 +617,39 @@ export default function App() {
             {/* MAIN BENTO GRID SECTION */}
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-5 mb-7">
               
-              {/* Card 1: Lead Organizer Profile Card */}
-              <div className="lg:col-span-3 rounded-[32px] overflow-hidden relative shadow-sm border border-[#e5e1d5] group flex flex-col justify-end min-h-[340px] bg-[#222]">
-                <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80"
-                  alt="Student Lead"
-                  className="absolute inset-0 w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent pointer-events-none" />
-
-                <div className="relative z-10 p-5 flex items-end justify-between text-white">
-                  <div>
-                    <h3 className="text-lg font-semibold tracking-tight">Lora Piterson</h3>
-                    <p className="text-xs text-white/70">UX/UI Designer & Lead</p>
-                    <div className="mt-2 flex items-center gap-1.5 text-[11px] bg-white/20 backdrop-blur-md px-2.5 py-1 rounded-full w-fit">
-                      <ShieldCheck className="w-3.5 h-3.5 text-amber-300" />
-                      <span>Student Council Lead</span>
-                    </div>
+              {/* Card 1: Student Council Lead Card (Image removed; replaced with sleek clean avatar layout) */}
+              <div className="lg:col-span-3 rounded-[32px] p-6 shadow-xs border border-[#e5e1d5] bg-gradient-to-b from-[#2e2d2a] to-[#1c1b18] text-white flex flex-col justify-between min-h-[340px]">
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-amber-300">
+                    <User className="w-6 h-6" />
                   </div>
-
-                  <div className="px-3.5 py-1.5 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-xs font-medium text-white shadow-sm">
+                  <div className="px-3.5 py-1.5 rounded-full bg-white/10 border border-white/20 text-xs font-medium text-white">
                     ${totalApprovedBudget}
+                  </div>
+                </div>
+
+                <div>
+                  <div className="mt-2 flex items-center gap-1.5 text-[11px] bg-white/10 px-2.5 py-1 rounded-full w-fit">
+                    <ShieldCheck className="w-3.5 h-3.5 text-amber-300" />
+                    <span>Student Council Officer</span>
+                  </div>
+                  <h3 className="text-xl font-semibold tracking-tight mt-2">Nixtio</h3>
+                  <p className="text-xs text-white/70 mt-0.5">Council Coordinator & Admin</p>
+                  
+                  <div className="mt-4 pt-4 border-t border-white/10 grid grid-cols-2 gap-2 text-center text-xs">
+                    <div className="p-2 rounded-xl bg-white/5">
+                      <div className="font-bold text-sm">{events.length}</div>
+                      <div className="text-[10px] text-white/50">Events Active</div>
+                    </div>
+                    <div className="p-2 rounded-xl bg-white/5">
+                      <div className="font-bold text-sm">{registeredEvents.length}</div>
+                      <div className="text-[10px] text-white/50">Booked Passes</div>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Card 2: Event Progress Chart Card (6.1h Work Time) */}
+              {/* Card 2: Progress Chart Card (Cleaned to 0h) */}
               <div className="lg:col-span-3 bg-white/80 backdrop-blur-sm rounded-[32px] p-6 border border-[#ece7dc] shadow-xs flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <span className="text-base font-semibold text-[#1c1a17]">Progress</span>
@@ -736,44 +663,29 @@ export default function App() {
 
                 <div className="my-3">
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-normal text-[#1a1917]">6.1 h</span>
-                    <span className="text-xs text-[#7e7a72] leading-tight">Work Time<br />this week</span>
+                    <span className="text-4xl font-normal text-[#1a1917]">{(timerSeconds / 3600).toFixed(1)} h</span>
+                    <span className="text-xs text-[#7e7a72] leading-tight">Work Time<br />this session</span>
                   </div>
                 </div>
 
                 <div className="pt-2">
                   <div className="flex items-end justify-between h-28 px-1 pb-1">
-                    {[
-                      { day: 'S', height: '25%', active: false },
-                      { day: 'M', height: '80%', active: true, barColor: 'bg-[#1b1916]' },
-                      { day: 'T', height: '55%', active: true, barColor: 'bg-[#1b1916]' },
-                      { day: 'W', height: '40%', active: true, barColor: 'bg-[#1b1916]' },
-                      { day: 'T', height: '70%', active: true, barColor: 'bg-[#1b1916]' },
-                      { day: 'F', height: '90%', active: true, barColor: 'bg-[#ffea79]', badge: '5h 23m' },
-                      { day: 'S', height: '20%', active: false },
-                    ].map((col, idx) => (
+                    {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, idx) => (
                       <div key={idx} className="flex flex-col items-center gap-2 group relative">
-                        {col.badge && (
-                          <span className="absolute -top-7 text-[10px] font-semibold bg-[#ffea79] text-[#332b00] px-2 py-0.5 rounded-full shadow-xs whitespace-nowrap">
-                            {col.badge}
-                          </span>
-                        )}
                         <div className="w-2.5 h-20 bg-[#efece4] rounded-full flex flex-col justify-end overflow-hidden">
                           <div
-                            className={`w-full rounded-full transition-all duration-300 ${
-                              col.barColor || 'bg-[#dedbd2]'
-                            }`}
-                            style={{ height: col.height }}
+                            className="w-full rounded-full transition-all duration-300 bg-[#ffea79]"
+                            style={{ height: timerSeconds > 0 && idx === 5 ? '60%' : '0%' }}
                           />
                         </div>
-                        <span className="text-[11px] font-medium text-[#8c8880]">{col.day}</span>
+                        <span className="text-[11px] font-medium text-[#8c8880]">{day}</span>
                       </div>
                     ))}
                   </div>
                 </div>
               </div>
 
-              {/* Card 3: Interactive Stopwatch Timer */}
+              {/* Card 3: Interactive Stopwatch Timer (Started at 00:00) */}
               <div className="lg:col-span-3 bg-white/80 backdrop-blur-sm rounded-[32px] p-6 border border-[#ece7dc] shadow-xs flex flex-col justify-between">
                 <div className="flex items-center justify-between">
                   <span className="text-base font-semibold text-[#1c1a17]">Time tracker</span>
@@ -807,9 +719,9 @@ export default function App() {
                     {isTimerRunning ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-0.5" />}
                   </button>
                   <button
-                    onClick={() => setTimerSeconds(155)}
+                    onClick={() => setTimerSeconds(0)}
                     className="w-10 h-10 rounded-full bg-[#1e1e1e] text-white flex items-center justify-center hover:bg-black shadow-xs transition cursor-pointer"
-                    title="Reset to 02:35 default"
+                    title="Reset timer"
                   >
                     <Clock className="w-4 h-4" />
                   </button>
@@ -832,39 +744,43 @@ export default function App() {
                   </div>
 
                   <div className="space-y-2.5 mt-4 max-h-56 overflow-y-auto pr-1">
-                    {checklist.map((item) => (
-                      <div
-                        key={item.id}
-                        className="p-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition flex items-center justify-between text-xs group"
-                      >
+                    {checklist.length === 0 ? (
+                      <p className="text-xs text-white/40 py-4 text-center">No tasks yet. Add one below!</p>
+                    ) : (
+                      checklist.map((item) => (
                         <div
-                          onClick={() => toggleChecklistItem(item.id)}
-                          className="flex-1 cursor-pointer"
+                          key={item.id}
+                          className="p-3 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition flex items-center justify-between text-xs group"
                         >
-                          <div className={`font-medium ${item.done ? 'line-through text-white/40' : 'text-white'}`}>
-                            {item.title}
-                          </div>
-                          <div className="text-[10px] text-white/40 mt-0.5">{item.time}</div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <button
+                          <div
                             onClick={() => toggleChecklistItem(item.id)}
-                            className={`w-5 h-5 rounded-full flex items-center justify-center transition cursor-pointer ${
-                              item.done ? 'bg-[#ffea79] text-black' : 'border border-white/30 text-transparent'
-                            }`}
+                            className="flex-1 cursor-pointer"
                           >
-                            ✓
-                          </button>
-                          <button
-                            onClick={() => deleteChecklistItem(item.id)}
-                            className="opacity-0 group-hover:opacity-100 text-white/40 hover:text-rose-400 transition cursor-pointer p-0.5"
-                          >
-                            <Trash2 className="w-3.5 h-3.5" />
-                          </button>
+                            <div className={`font-medium ${item.done ? 'line-through text-white/40' : 'text-white'}`}>
+                              {item.title}
+                            </div>
+                            <div className="text-[10px] text-white/40 mt-0.5">{item.time}</div>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <button
+                              onClick={() => toggleChecklistItem(item.id)}
+                              className={`w-5 h-5 rounded-full flex items-center justify-center transition cursor-pointer ${
+                                item.done ? 'bg-[#ffea79] text-black' : 'border border-white/30 text-transparent'
+                              }`}
+                            >
+                              ✓
+                            </button>
+                            <button
+                              onClick={() => deleteChecklistItem(item.id)}
+                              className="opacity-0 group-hover:opacity-100 text-white/40 hover:text-rose-400 transition cursor-pointer p-0.5"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </div>
 
                   {/* Quick Add Checklist Input */}
@@ -897,48 +813,37 @@ export default function App() {
             {/* BOTTOM SECTION: CALENDAR TIMELINE & EXPLORE EVENTS */}
             <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-5">
               
-              {/* Left mini widgets: Devices & Approvals */}
+              {/* Left mini widgets */}
               <div className="lg:col-span-3 space-y-4">
                 <div
                   onClick={() => setActiveTab('Budget')}
                   className="bg-white/80 backdrop-blur-sm rounded-[24px] p-4 border border-[#ece7dc] shadow-xs flex items-center justify-between cursor-pointer hover:bg-white transition"
                 >
-                  <span className="text-sm font-medium text-[#292723]">Pension & Budget allocations</span>
-                  <ChevronDown className="w-4 h-4 text-[#777]" />
+                  <span className="text-sm font-medium text-[#292723]">Budget Allocation</span>
+                  <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-900">${totalApprovedBudget}</span>
                 </div>
 
-                {/* Allocated Gear / Devices Widget */}
                 <div className="bg-white/80 backdrop-blur-sm rounded-[28px] p-5 border border-[#ece7dc] shadow-xs">
                   <div className="flex items-center justify-between mb-4">
-                    <span className="text-sm font-semibold text-[#1c1a17]">Devices</span>
+                    <span className="text-sm font-semibold text-[#1c1a17]">Devices & Gear</span>
                     <ChevronUp className="w-4 h-4 text-[#777]" />
                   </div>
 
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-2 rounded-2xl bg-[#f9f8f4] border border-[#eee9dc]">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-800">
-                          <Laptop className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-semibold text-[#1d1b18]">MacBook Air</div>
-                          <div className="text-[10px] text-[#827e75]">Version M1</div>
-                        </div>
+                  <div className="space-y-3 text-xs">
+                    <div className="p-2.5 rounded-2xl bg-[#f9f8f4] border border-[#eee9dc] flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Laptop className="w-4 h-4 text-amber-800" />
+                        <span>Console Desk</span>
                       </div>
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Online</span>
+                      <span className="text-[10px] font-medium text-emerald-800">Online</span>
                     </div>
 
-                    <div className="flex items-center justify-between p-2 rounded-2xl bg-[#f9f8f4] border border-[#eee9dc]">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-800">
-                          <Mic2 className="w-5 h-5" />
-                        </div>
-                        <div>
-                          <div className="text-xs font-semibold text-[#1d1b18]">Audio Desk PA</div>
-                          <div className="text-[10px] text-[#827e75]">Console Unit 2</div>
-                        </div>
+                    <div className="p-2.5 rounded-2xl bg-[#f9f8f4] border border-[#eee9dc] flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Mic2 className="w-4 h-4 text-blue-800" />
+                        <span>PA Audio Mics</span>
                       </div>
-                      <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Ready</span>
+                      <span className="text-[10px] font-medium text-emerald-800">Ready</span>
                     </div>
                   </div>
                 </div>
@@ -946,15 +851,12 @@ export default function App() {
 
               {/* Calendar & Upcoming Events Feed */}
               <div className="lg:col-span-9 bg-white/80 backdrop-blur-sm rounded-[32px] p-6 border border-[#ece7dc] shadow-xs">
-                
-                {/* Header with Search and Month Bar */}
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#efece3]">
                   <div>
                     <span className="text-xs uppercase tracking-wider text-[#8a867c] font-semibold">Campus Calendar</span>
-                    <h2 className="text-xl font-semibold text-[#1b1916]">September 2024 - 2026</h2>
+                    <h2 className="text-xl font-semibold text-[#1b1916]">Campus Events Feed</h2>
                   </div>
 
-                  {/* Search bar inside pill */}
                   <div className="flex items-center gap-3">
                     <div className="relative">
                       <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-[#8b877f]" />
@@ -966,170 +868,112 @@ export default function App() {
                         className="pl-9 pr-4 py-2 bg-[#f6f4ed] rounded-full text-xs text-[#2b2a26] border border-[#e5e1d5] focus:outline-none focus:border-black w-48 sm:w-60"
                       />
                     </div>
-
-                    {/* Filter tags */}
-                    <div className="flex items-center bg-[#f4f1e8] p-1 rounded-full border border-[#e4e0d4] text-xs">
-                      {['All', 'Technical', 'Cultural', 'Business'].map((cat) => (
-                        <button
-                          key={cat}
-                          onClick={() => setFilterCategory(cat)}
-                          className={`px-3 py-1 rounded-full text-xs font-medium cursor-pointer transition ${
-                            filterCategory === cat
-                              ? 'bg-[#1e1e1e] text-white shadow-xs'
-                              : 'text-[#69655e] hover:text-black'
-                          }`}
-                        >
-                          {cat}
-                        </button>
-                      ))}
-                    </div>
                   </div>
                 </div>
 
-                {/* Calendar Days Row Header */}
-                <div className="grid grid-cols-6 gap-2 my-5 text-center text-xs">
-                  {[
-                    { day: 'Mon', num: 22 },
-                    { day: 'Tue', num: 23 },
-                    { day: 'Wed', num: 24, active: true },
-                    { day: 'Thu', num: 25 },
-                    { day: 'Fri', num: 26 },
-                    { day: 'Sat', num: 27 },
-                  ].map((d, i) => (
-                    <div
-                      key={i}
-                      onClick={() => {
-                        setSelectedCalendarDate(`2026-09-${d.num}`);
-                        setActiveTab('Calendar');
-                      }}
-                      className={`p-2.5 rounded-2xl border transition cursor-pointer ${
-                        d.active
-                          ? 'bg-[#1f1e1b] text-white border-black shadow-sm'
-                          : 'bg-[#faf8f2] border-[#edeae1] text-[#555] hover:bg-white'
-                      }`}
-                    >
-                      <div className={`text-[10px] ${d.active ? 'text-white/70' : 'text-[#87837a]'}`}>{d.day}</div>
-                      <div className="text-base font-semibold mt-0.5">{d.num}</div>
-                    </div>
-                  ))}
-                </div>
-
                 {/* Event Cards Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {filteredEvents.slice(0, 2).map((ev) => {
-                    const isReg = registeredEvents.includes(ev.id);
-                    const percent = Math.min(100, Math.round((ev.registeredCount / ev.capacity) * 100));
+                {filteredEvents.length === 0 ? (
+                  <div className="py-12 text-center">
+                    <p className="text-sm text-[#7a766e]">No events created yet.</p>
+                    <button
+                      onClick={() => setShowCreateModal(true)}
+                      className="mt-3 px-5 py-2 rounded-full bg-[#ffea79] text-[#201d16] font-semibold text-xs cursor-pointer hover:bg-amber-300"
+                    >
+                      Host First Event
+                    </button>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+                    {filteredEvents.slice(0, 2).map((ev) => {
+                      const isReg = registeredEvents.includes(ev.id);
+                      const percent = ev.capacity > 0 ? Math.min(100, Math.round((ev.registeredCount / ev.capacity) * 100)) : 0;
 
-                    return (
-                      <div
-                        key={ev.id}
-                        className="group bg-[#fcfbf7] rounded-[24px] p-4 border border-[#ece8dd] hover:border-[#1e1e1e] hover:shadow-md transition-all duration-300 flex flex-col justify-between"
-                      >
-                        <div>
-                          <div className="relative h-36 w-full rounded-2xl overflow-hidden mb-3 bg-[#e8e4d8]">
-                            <img
-                              src={ev.image}
-                              alt={ev.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                            />
-                            <div className="absolute top-2.5 left-2.5 px-3 py-1 rounded-full bg-black/60 backdrop-blur-md text-[11px] font-medium text-white flex items-center gap-1">
-                              <Flame className="w-3 h-3 text-amber-300 fill-amber-300" />
-                              <span>{ev.status}</span>
-                            </div>
-                            <div className="absolute top-2.5 right-2.5 px-3 py-1 rounded-full bg-white/80 backdrop-blur-md text-[11px] font-semibold text-[#1e1e1e]">
-                              {ev.category}
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-2 text-[11px] text-[#7d7970] font-medium mb-1">
-                            <span className="text-[#1a1917] font-semibold">{ev.club}</span>
-                            <span>•</span>
-                            <span>{ev.venue}</span>
-                          </div>
-
-                          <h3 className="text-base font-semibold text-[#1a1917] tracking-tight group-hover:text-black line-clamp-1">
-                            {ev.title}
-                          </h3>
-
-                          <p className="text-xs text-[#6e6a62] mt-1 line-clamp-2 leading-relaxed">
-                            {ev.description}
-                          </p>
-
-                          <div className="mt-3 flex items-center gap-3 text-xs text-[#524f48]">
-                            <div className="flex items-center gap-1">
-                              <CalendarIcon className="w-3.5 h-3.5 text-[#868278]" />
-                              <span>{ev.date}</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <Clock className="w-3.5 h-3.5 text-[#868278]" />
-                              <span>{ev.time}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="mt-4 pt-3 border-t border-[#ede9de] flex items-center justify-between">
+                      return (
+                        <div
+                          key={ev.id}
+                          className="group bg-[#fcfbf7] rounded-[24px] p-4 border border-[#ece8dd] hover:border-[#1e1e1e] hover:shadow-md transition-all duration-300 flex flex-col justify-between"
+                        >
                           <div>
-                            <div className="text-[11px] text-[#736f66] font-medium">
-                              <span className="font-semibold text-black">{ev.registeredCount}</span> / {ev.capacity} spots
-                            </div>
-                            <div className="w-24 h-1.5 bg-[#ede9de] rounded-full overflow-hidden mt-1">
-                              <div
-                                className="h-full bg-amber-400 rounded-full"
-                                style={{ width: `${percent}%` }}
+                            <div className="relative h-36 w-full rounded-2xl overflow-hidden mb-3 bg-[#e8e4d8]">
+                              <img
+                                src={ev.image}
+                                alt={ev.title}
+                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                               />
+                              <div className="absolute top-2.5 right-2.5 px-3 py-1 rounded-full bg-white/80 backdrop-blur-md text-[11px] font-semibold text-[#1e1e1e]">
+                                {ev.category}
+                              </div>
                             </div>
+
+                            <div className="flex items-center gap-2 text-[11px] text-[#7d7970] font-medium mb-1">
+                              <span className="text-[#1a1917] font-semibold">{ev.club}</span>
+                              <span>•</span>
+                              <span>{ev.venue}</span>
+                            </div>
+
+                            <h3 className="text-base font-semibold text-[#1a1917] tracking-tight group-hover:text-black line-clamp-1">
+                              {ev.title}
+                            </h3>
+
+                            <p className="text-xs text-[#6e6a62] mt-1 line-clamp-2 leading-relaxed">
+                              {ev.description}
+                            </p>
                           </div>
 
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => setSelectedEventModal(ev)}
-                              className="px-3 py-1.5 rounded-full border border-[#ded9cb] hover:bg-white text-xs font-medium text-[#3b3934] transition cursor-pointer"
-                            >
-                              Details
-                            </button>
+                          <div className="mt-4 pt-3 border-t border-[#ede9de] flex items-center justify-between">
+                            <div>
+                              <div className="text-[11px] text-[#736f66] font-medium">
+                                <span className="font-semibold text-black">{ev.registeredCount}</span> / {ev.capacity} spots
+                              </div>
+                              <div className="w-24 h-1.5 bg-[#ede9de] rounded-full overflow-hidden mt-1">
+                                <div
+                                  className="h-full bg-amber-400 rounded-full"
+                                  style={{ width: `${percent}%` }}
+                                />
+                              </div>
+                            </div>
 
-                            <button
-                              onClick={() => toggleRegistration(ev.id)}
-                              className={`px-4 py-1.5 rounded-full text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
-                                isReg
-                                  ? 'bg-emerald-600 text-white'
-                                  : 'bg-[#1b1916] text-white hover:bg-black'
-                              }`}
-                            >
-                              {isReg ? (
-                                <>
-                                  <CheckCircle2 className="w-3.5 h-3.5" />
-                                  <span>Booked</span>
-                                </>
-                              ) : (
-                                <>
-                                  <Ticket className="w-3.5 h-3.5" />
-                                  <span>RSVP</span>
-                                </>
-                              )}
-                            </button>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => setSelectedEventModal(ev)}
+                                className="px-3 py-1.5 rounded-full border border-[#ded9cb] hover:bg-white text-xs font-medium text-[#3b3934] transition cursor-pointer"
+                              >
+                                Details
+                              </button>
+
+                              <button
+                                onClick={() => toggleRegistration(ev.id)}
+                                className={`px-4 py-1.5 rounded-full text-xs font-medium transition cursor-pointer flex items-center gap-1.5 ${
+                                  isReg
+                                    ? 'bg-emerald-600 text-white'
+                                    : 'bg-[#1b1916] text-white hover:bg-black'
+                                }`}
+                              >
+                                {isReg ? 'Booked' : 'RSVP'}
+                              </button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
           </div>
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 2: EVENTS (ALL EVENTS DIRECTORY) */}
+        {/* TAB 2: EVENTS */}
         {/* ========================================================================= */}
         {activeTab === 'Events' && (
           <div className="animate-in fade-in duration-200">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
               <div>
                 <span className="text-xs uppercase tracking-wider text-[#8a867c] font-semibold">Campus Catalog</span>
-                <h1 className="text-3xl font-serif text-[#1b1916]">All College Events & Hackathons</h1>
+                <h1 className="text-3xl font-serif text-[#1b1916]">College Events & Hackathons</h1>
                 <p className="text-xs text-[#736e65] mt-1">
-                  Browse, manage, host, and register for real college events with live capacity tracking.
+                  Host and discover campus workshops, guest lectures, and competitions.
                 </p>
               </div>
 
@@ -1154,27 +998,9 @@ export default function App() {
               </div>
             </div>
 
-            {/* Filter Pills */}
-            <div className="flex items-center gap-2 mb-6 overflow-x-auto pb-2">
-              {['All', 'Technical', 'Cultural', 'Business'].map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setFilterCategory(cat)}
-                  className={`px-4 py-2 rounded-full text-xs font-medium cursor-pointer transition ${
-                    filterCategory === cat
-                      ? 'bg-[#1e1e1e] text-white shadow-sm'
-                      : 'bg-[#f4f1e8] text-[#69655e] hover:bg-[#ede8db]'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
-
-            {/* Events Grid */}
             {filteredEvents.length === 0 ? (
               <div className="bg-white/60 rounded-3xl p-12 text-center border border-[#ece7dc]">
-                <p className="text-sm text-[#777]">No events found matching your search.</p>
+                <p className="text-sm text-[#777]">No events recorded.</p>
                 <button
                   onClick={() => setShowCreateModal(true)}
                   className="mt-4 px-5 py-2 rounded-full bg-[#ffea79] text-black text-xs font-semibold cursor-pointer"
@@ -1186,7 +1012,7 @@ export default function App() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredEvents.map((ev) => {
                   const isReg = registeredEvents.includes(ev.id);
-                  const percent = Math.min(100, Math.round((ev.registeredCount / ev.capacity) * 100));
+                  const percent = ev.capacity > 0 ? Math.min(100, Math.round((ev.registeredCount / ev.capacity) * 100)) : 0;
 
                   return (
                     <div
@@ -1196,9 +1022,6 @@ export default function App() {
                       <div>
                         <div className="relative h-44 rounded-2xl overflow-hidden mb-4 bg-[#ece7db]">
                           <img src={ev.image} alt={ev.title} className="w-full h-full object-cover" />
-                          <span className="absolute top-3 left-3 bg-black/60 backdrop-blur-md text-white text-[11px] px-3 py-1 rounded-full font-medium">
-                            {ev.status}
-                          </span>
                           <span className="absolute top-3 right-3 bg-[#ffea79] text-[#2b2500] text-[11px] px-3 py-1 rounded-full font-semibold">
                             {ev.category}
                           </span>
@@ -1211,17 +1034,6 @@ export default function App() {
                         <p className="text-xs text-[#6e6a62] mt-2 line-clamp-2 leading-relaxed">
                           {ev.description}
                         </p>
-
-                        <div className="mt-4 pt-3 border-t border-[#ede9de] flex items-center justify-between text-xs text-[#524f48]">
-                          <span className="flex items-center gap-1">
-                            <CalendarIcon className="w-3.5 h-3.5 text-[#888]" />
-                            {ev.date}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Clock className="w-3.5 h-3.5 text-[#888]" />
-                            {ev.time}
-                          </span>
-                        </div>
                       </div>
 
                       <div className="mt-5 pt-3 border-t border-[#ede9de] flex items-center justify-between">
@@ -1244,20 +1056,18 @@ export default function App() {
 
                           <button
                             onClick={() => toggleRegistration(ev.id)}
-                            className={`px-4 py-1.5 rounded-full text-xs font-medium transition cursor-pointer flex items-center gap-1 ${
+                            className={`px-4 py-1.5 rounded-full text-xs font-medium transition cursor-pointer ${
                               isReg
                                 ? 'bg-emerald-600 text-white'
                                 : 'bg-[#1b1916] text-white hover:bg-black'
                             }`}
                           >
-                            {isReg ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Ticket className="w-3.5 h-3.5" />}
-                            <span>{isReg ? 'Booked' : 'RSVP'}</span>
+                            {isReg ? 'Booked' : 'RSVP'}
                           </button>
 
                           <button
                             onClick={() => handleDeleteEvent(ev.id, ev.title)}
                             className="w-8 h-8 rounded-full border border-[#ded9cb] flex items-center justify-center text-rose-500 hover:bg-rose-50 transition cursor-pointer"
-                            title="Delete event"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -1272,84 +1082,90 @@ export default function App() {
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 3: CLUBS & STUDENT SOCIETIES */}
+        {/* TAB 3: CLUBS */}
         {/* ========================================================================= */}
         {activeTab === 'Clubs' && (
           <div className="animate-in fade-in duration-200">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
               <div>
                 <span className="text-xs uppercase tracking-wider text-[#8a867c] font-semibold">Campus Communities</span>
-                <h1 className="text-3xl font-serif text-[#1b1916]">Clubs & Technical Societies</h1>
+                <h1 className="text-3xl font-serif text-[#1b1916]">Clubs & Societies</h1>
                 <p className="text-xs text-[#736e65] mt-1">
-                  Connect with active student chapters, attend internal sessions, or join organizing committees.
+                  Manage student clubs, memberships, and lead organizers.
                 </p>
               </div>
 
-              <div className="text-right">
-                <div className="text-2xl font-semibold text-[#1a1917]">{clubs.length} Active Chapters</div>
-                <div className="text-[11px] text-[#78746c]">{totalClubMembers} Active Members</div>
-              </div>
+              <button
+                onClick={() => setShowAddClubModal(true)}
+                className="px-5 py-2.5 rounded-full bg-[#ffea79] text-black font-semibold text-xs cursor-pointer hover:bg-amber-300 flex items-center gap-1.5"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Register New Club</span>
+              </button>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {clubs.map((c) => (
-                <div
-                  key={c.id}
-                  className="bg-white/80 rounded-[32px] p-6 border border-[#ece7dc] hover:shadow-md transition flex flex-col justify-between"
+            {clubs.length === 0 ? (
+              <div className="bg-white/60 rounded-3xl p-12 text-center border border-[#ece7dc]">
+                <p className="text-sm text-[#777]">No student clubs registered yet.</p>
+                <button
+                  onClick={() => setShowAddClubModal(true)}
+                  className="mt-4 px-5 py-2 rounded-full bg-[#1b1916] text-white text-xs font-semibold cursor-pointer"
                 >
-                  <div>
-                    <div className="flex items-center gap-4 mb-4">
-                      <img src={c.avatar} alt={c.name} className="w-14 h-14 rounded-2xl object-cover border border-[#ded9cb]" />
-                      <div>
-                        <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900">
-                          {c.category}
-                        </span>
-                        <h3 className="text-base font-semibold text-[#1b1916] mt-1">{c.name}</h3>
-                        <p className="text-[11px] text-[#7d7970]">Coordinator: {c.leads}</p>
+                  Register Society
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {clubs.map((c) => (
+                  <div
+                    key={c.id}
+                    className="bg-white/80 rounded-[32px] p-6 border border-[#ece7dc] hover:shadow-md transition flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="flex items-center gap-4 mb-4">
+                        <div className="w-14 h-14 rounded-2xl bg-amber-100 flex items-center justify-center font-bold text-amber-900 text-lg">
+                          {c.name.charAt(0)}
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900">
+                            {c.category}
+                          </span>
+                          <h3 className="text-base font-semibold text-[#1b1916] mt-1">{c.name}</h3>
+                          <p className="text-[11px] text-[#7d7970]">Lead: {c.leads}</p>
+                        </div>
+                      </div>
+
+                      <p className="text-xs text-[#6e6a62] leading-relaxed mb-4">
+                        {c.description}
+                      </p>
+
+                      <div className="p-3 rounded-2xl bg-[#faf8f2] border border-[#eee9dc] text-center mb-4">
+                        <div className="text-xs font-semibold text-[#1a1917]">{c.members}</div>
+                        <div className="text-[10px] text-[#868278]">Members</div>
                       </div>
                     </div>
 
-                    <p className="text-xs text-[#6e6a62] leading-relaxed mb-4">
-                      {c.description}
-                    </p>
-
-                    <div className="p-3 rounded-2xl bg-[#faf8f2] border border-[#eee9dc] text-center mb-4">
-                      <div className="text-xs font-semibold text-[#1a1917]">{c.members}</div>
-                      <div className="text-[10px] text-[#868278]">Registered Student Members</div>
+                    <div className="pt-3 border-t border-[#ede9de] flex items-center justify-between">
+                      <button
+                        onClick={() => toggleClubMembership(c.id)}
+                        className={`px-4 py-2 rounded-full text-xs font-semibold transition cursor-pointer ${
+                          c.joined
+                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                            : 'bg-[#ffea79] hover:bg-[#ffe55b] text-[#242000]'
+                        }`}
+                      >
+                        {c.joined ? 'Member ✓ (Leave)' : 'Join Society'}
+                      </button>
                     </div>
                   </div>
-
-                  <div className="pt-3 border-t border-[#ede9de] flex items-center justify-between">
-                    <button
-                      onClick={() => {
-                        setFilterCategory(c.category);
-                        setActiveTab('Events');
-                      }}
-                      className="text-xs font-medium text-[#4f4c45] hover:text-black flex items-center gap-1 cursor-pointer"
-                    >
-                      <span>Events Hosted</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </button>
-
-                    <button
-                      onClick={() => toggleClubMembership(c.id)}
-                      className={`px-4 py-2 rounded-full text-xs font-semibold transition cursor-pointer ${
-                        c.joined
-                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-200 hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200'
-                          : 'bg-[#ffea79] hover:bg-[#ffe55b] text-[#242000]'
-                      }`}
-                    >
-                      {c.joined ? 'Member ✓ (Leave)' : 'Join Society'}
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 4: VENUES & AUDITORIUMS */}
+        {/* TAB 4: VENUES */}
         {/* ========================================================================= */}
         {activeTab === 'Venues' && (
           <div className="animate-in fade-in duration-200">
@@ -1358,100 +1174,106 @@ export default function App() {
                 <span className="text-xs uppercase tracking-wider text-[#8a867c] font-semibold">Campus Infrastructure</span>
                 <h1 className="text-3xl font-serif text-[#1b1916]">Auditoriums & Event Venues</h1>
                 <p className="text-xs text-[#736e65] mt-1">
-                  Inspect facilities, check capacity limits, and directly reserve campus venues for approved student events.
+                  Manage halls, lecture theaters, and outdoor arenas.
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-medium px-3.5 py-1.5 rounded-full bg-emerald-100 text-emerald-800">
-                  {venues.length} Managed Campus Spaces
-                </span>
+              <button
+                onClick={() => setShowAddVenueModal(true)}
+                className="px-5 py-2.5 rounded-full bg-[#1b1916] text-white font-semibold text-xs cursor-pointer hover:bg-black flex items-center gap-1.5"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Campus Venue</span>
+              </button>
+            </div>
+
+            {venues.length === 0 ? (
+              <div className="bg-white/60 rounded-3xl p-12 text-center border border-[#ece7dc]">
+                <p className="text-sm text-[#777]">No venues configured yet.</p>
+                <button
+                  onClick={() => setShowAddVenueModal(true)}
+                  className="mt-4 px-5 py-2 rounded-full bg-[#ffea79] text-black text-xs font-semibold cursor-pointer"
+                >
+                  Add First Venue
+                </button>
               </div>
-            </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {venues.map((v) => {
+                  const bookedEvent = events.find((e) => e.venue === v.name);
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {venues.map((v) => {
-                // Find if an event is booked here
-                const bookedEvent = events.find((e) => e.venue === v.name);
-
-                return (
-                  <div
-                    key={v.id}
-                    className="bg-white/80 rounded-[32px] p-6 border border-[#ece7dc] hover:shadow-md transition flex flex-col justify-between"
-                  >
-                    <div>
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="text-lg font-bold text-[#1b1916]">{v.name}</h3>
-                        <span
-                          className={`text-[11px] font-semibold px-3 py-1 rounded-full ${
-                            bookedEvent
-                              ? 'bg-amber-100 text-amber-900 border border-amber-200'
-                              : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                          }`}
-                        >
-                          {bookedEvent ? 'Booked' : 'Available'}
-                        </span>
-                      </div>
-
-                      <div className="text-xs text-[#7c7870] mb-3">
-                        {v.type} • <span className="font-semibold text-black">Capacity: {v.capacity} seats</span>
-                      </div>
-
-                      {bookedEvent ? (
-                        <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200/60 mb-4 text-xs">
-                          <span className="text-amber-800 font-medium">Scheduled for: </span>
-                          <span className="font-bold text-black">{bookedEvent.title}</span> ({bookedEvent.date})
-                        </div>
-                      ) : (
-                        <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200/60 mb-4 text-xs text-emerald-800">
-                          Ready for booking and stage allocations.
-                        </div>
-                      )}
-
+                  return (
+                    <div
+                      key={v.id}
+                      className="bg-white/80 rounded-[32px] p-6 border border-[#ece7dc] hover:shadow-md transition flex flex-col justify-between"
+                    >
                       <div>
-                        <span className="text-[11px] uppercase tracking-wider text-[#8b877e] font-semibold">
-                          Facilities Included:
-                        </span>
-                        <div className="flex flex-wrap gap-1.5 mt-2">
-                          {v.facilities.map((fac, i) => (
-                            <span
-                              key={i}
-                              className="text-[11px] px-2.5 py-1 rounded-full bg-[#faf7f0] border border-[#eae5d8] text-[#4f4d47]"
-                            >
-                              ✓ {fac}
-                            </span>
-                          ))}
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="text-lg font-bold text-[#1b1916]">{v.name}</h3>
+                          <span
+                            className={`text-[11px] font-semibold px-3 py-1 rounded-full ${
+                              bookedEvent
+                                ? 'bg-amber-100 text-amber-900 border border-amber-200'
+                                : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                            }`}
+                          >
+                            {bookedEvent ? 'Booked' : 'Available'}
+                          </span>
+                        </div>
+
+                        <div className="text-xs text-[#7c7870] mb-3">
+                          {v.type} • <span className="font-semibold text-black">Capacity: {v.capacity} seats</span>
+                        </div>
+
+                        {bookedEvent ? (
+                          <div className="p-3 rounded-2xl bg-amber-50 border border-amber-200/60 mb-4 text-xs">
+                            <span className="text-amber-800 font-medium">Scheduled for: </span>
+                            <span className="font-bold text-black">{bookedEvent.title}</span> ({bookedEvent.date})
+                          </div>
+                        ) : (
+                          <div className="p-3 rounded-2xl bg-emerald-50 border border-emerald-200/60 mb-4 text-xs text-emerald-800">
+                            Ready for booking and stage allocations.
+                          </div>
+                        )}
+
+                        <div>
+                          <span className="text-[11px] uppercase tracking-wider text-[#8b877e] font-semibold">
+                            Facilities Included:
+                          </span>
+                          <div className="flex flex-wrap gap-1.5 mt-2">
+                            {v.facilities.map((fac, i) => (
+                              <span
+                                key={i}
+                                className="text-[11px] px-2.5 py-1 rounded-full bg-[#faf7f0] border border-[#eae5d8] text-[#4f4d47]"
+                              >
+                                ✓ {fac}
+                              </span>
+                            ))}
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="mt-6 pt-3 border-t border-[#ede9de] flex items-center justify-between">
-                      <button
-                        onClick={() => triggerToast('Availability Checked', `${v.name} status is up-to-date.`)}
-                        className="text-xs font-medium text-[#4c4943] hover:text-black cursor-pointer"
-                      >
-                        Check Specs
-                      </button>
-
-                      <button
-                        onClick={() => {
-                          setNewEvent((prev) => ({ ...prev, venue: v.name }));
-                          setShowCreateModal(true);
-                        }}
-                        className="px-5 py-2 rounded-full bg-[#1b1916] hover:bg-black text-white text-xs font-semibold cursor-pointer"
-                      >
-                        Host Event Here
-                      </button>
+                      <div className="mt-6 pt-3 border-t border-[#ede9de] flex items-center justify-between">
+                        <button
+                          onClick={() => {
+                            setNewEvent((prev) => ({ ...prev, venue: v.name }));
+                            setShowCreateModal(true);
+                          }}
+                          className="px-5 py-2 rounded-full bg-[#1b1916] hover:bg-black text-white text-xs font-semibold cursor-pointer"
+                        >
+                          Book Venue
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 
         {/* ========================================================================= */}
-        {/* TAB 5: BUDGET & EXPENDITURE */}
+        {/* TAB 5: BUDGET */}
         {/* ========================================================================= */}
         {activeTab === 'Budget' && (
           <div className="animate-in fade-in duration-200">
@@ -1464,15 +1286,13 @@ export default function App() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setShowAddBudgetItemModal(true)}
-                  className="px-5 py-2.5 rounded-full bg-[#ffea79] text-[#201d16] font-semibold text-xs flex items-center gap-1.5 cursor-pointer hover:bg-amber-300"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Request Budget</span>
-                </button>
-              </div>
+              <button
+                onClick={() => setShowAddBudgetItemModal(true)}
+                className="px-5 py-2.5 rounded-full bg-[#ffea79] text-[#201d16] font-semibold text-xs flex items-center gap-1.5 cursor-pointer hover:bg-amber-300"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Request Budget</span>
+              </button>
             </div>
 
             {/* Treasury KPI Tiles */}
@@ -1493,60 +1313,71 @@ export default function App() {
               </div>
             </div>
 
-            {/* Ledger Table */}
-            <div className="bg-white/80 rounded-[32px] p-6 border border-[#ece7dc] shadow-xs overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead>
-                    <tr className="text-[#88837a] border-b border-[#f1eee6]">
-                      <th className="py-3 px-4 font-semibold">Expense Item</th>
-                      <th className="py-3 px-4 font-semibold">Club / Society</th>
-                      <th className="py-3 px-4 font-semibold">Category</th>
-                      <th className="py-3 px-4 font-semibold">Amount</th>
-                      <th className="py-3 px-4 font-semibold">Status</th>
-                      <th className="py-3 px-4 font-semibold text-right">Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-[#f5f2eb]">
-                    {budgetItems.map((b) => (
-                      <tr key={b.id} className="hover:bg-[#faf8f2] transition">
-                        <td className="py-3 px-4 font-medium text-[#1c1a17]">{b.item}</td>
-                        <td className="py-3 px-4 text-[#5f5c55]">{b.club}</td>
-                        <td className="py-3 px-4">
-                          <span className="px-2.5 py-0.5 rounded-full bg-[#f4f1e8] text-[#555] font-medium text-[11px]">
-                            {b.category}
-                          </span>
-                        </td>
-                        <td className="py-3 px-4 font-semibold text-[#1b1916]">${b.amount}</td>
-                        <td className="py-3 px-4">
-                          <span
-                            className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium ${
-                              b.status === 'Approved'
-                                ? 'bg-emerald-100 text-emerald-800'
-                                : 'bg-amber-100 text-amber-800'
-                            }`}
-                          >
-                            {b.status}
-                          </span>
-                        </td>
-                        <td className="py-3 px-4 text-right">
-                          {b.status === 'Pending Review' ? (
-                            <button
-                              onClick={() => approveBudgetItem(b.id)}
-                              className="px-3 py-1 rounded-full bg-[#1b1916] hover:bg-black text-white text-[11px] font-medium transition cursor-pointer"
-                            >
-                              Approve
-                            </button>
-                          ) : (
-                            <span className="text-[11px] text-emerald-700 font-medium">Cleared ✓</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+            {budgetItems.length === 0 ? (
+              <div className="bg-white/60 rounded-3xl p-12 text-center border border-[#ece7dc]">
+                <p className="text-sm text-[#777]">No budget requests recorded yet.</p>
+                <button
+                  onClick={() => setShowAddBudgetItemModal(true)}
+                  className="mt-4 px-5 py-2 rounded-full bg-[#1b1916] text-white text-xs font-semibold cursor-pointer"
+                >
+                  Create Budget Request
+                </button>
               </div>
-            </div>
+            ) : (
+              <div className="bg-white/80 rounded-[32px] p-6 border border-[#ece7dc] shadow-xs overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs">
+                    <thead>
+                      <tr className="text-[#88837a] border-b border-[#f1eee6]">
+                        <th className="py-3 px-4 font-semibold">Expense Item</th>
+                        <th className="py-3 px-4 font-semibold">Club</th>
+                        <th className="py-3 px-4 font-semibold">Category</th>
+                        <th className="py-3 px-4 font-semibold">Amount</th>
+                        <th className="py-3 px-4 font-semibold">Status</th>
+                        <th className="py-3 px-4 font-semibold text-right">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-[#f5f2eb]">
+                      {budgetItems.map((b) => (
+                        <tr key={b.id} className="hover:bg-[#faf8f2] transition">
+                          <td className="py-3 px-4 font-medium text-[#1c1a17]">{b.item}</td>
+                          <td className="py-3 px-4 text-[#5f5c55]">{b.club}</td>
+                          <td className="py-3 px-4">
+                            <span className="px-2.5 py-0.5 rounded-full bg-[#f4f1e8] text-[#555] font-medium text-[11px]">
+                              {b.category}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 font-semibold text-[#1b1916]">${b.amount}</td>
+                          <td className="py-3 px-4">
+                            <span
+                              className={`px-2.5 py-0.5 rounded-full text-[11px] font-medium ${
+                                b.status === 'Approved'
+                                  ? 'bg-emerald-100 text-emerald-800'
+                                  : 'bg-amber-100 text-amber-800'
+                              }`}
+                            >
+                              {b.status}
+                            </span>
+                          </td>
+                          <td className="py-3 px-4 text-right">
+                            {b.status === 'Pending Review' ? (
+                              <button
+                                onClick={() => approveBudgetItem(b.id)}
+                                className="px-3 py-1 rounded-full bg-[#1b1916] hover:bg-black text-white text-[11px] font-medium transition cursor-pointer"
+                              >
+                                Approve
+                              </button>
+                            ) : (
+                              <span className="text-[11px] text-emerald-700 font-medium">Cleared ✓</span>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -1560,61 +1391,18 @@ export default function App() {
                 <span className="text-xs uppercase tracking-wider text-[#8a867c] font-semibold">Semester Schedule</span>
                 <h1 className="text-3xl font-serif text-[#1b1916]">Academic & Event Calendar</h1>
                 <p className="text-xs text-[#736e65] mt-1">
-                  View scheduled dates, time slots, and registrations across days.
+                  View scheduled dates, time slots, and registrations.
                 </p>
               </div>
 
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setSelectedCalendarDate('2026-09-24')}
-                  className="px-4 py-1.5 rounded-full bg-[#1b1916] text-white text-xs font-semibold cursor-pointer"
-                >
-                  Jump to Hackathon Day
-                </button>
-              </div>
+              <input
+                type="date"
+                value={selectedCalendarDate}
+                onChange={(e) => setSelectedCalendarDate(e.target.value)}
+                className="px-4 py-2 rounded-full border border-[#ded9cb] bg-white text-xs font-semibold"
+              />
             </div>
 
-            {/* Date Strip */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-3 mb-8">
-              {[
-                { dateStr: '2026-09-22', day: 'Mon', num: 22 },
-                { dateStr: '2026-09-23', day: 'Tue', num: 23 },
-                { dateStr: '2026-09-24', day: 'Wed', num: 24 },
-                { dateStr: '2026-09-25', day: 'Thu', num: 25 },
-                { dateStr: '2026-09-26', day: 'Fri', num: 26 },
-                { dateStr: '2026-09-27', day: 'Sat', num: 27 },
-                { dateStr: '2026-09-28', day: 'Sun', num: 28 },
-              ].map((item) => {
-                const isSelected = selectedCalendarDate === item.dateStr;
-                const eventsOnDate = events.filter((e) => e.date === item.dateStr);
-
-                return (
-                  <div
-                    key={item.dateStr}
-                    onClick={() => setSelectedCalendarDate(item.dateStr)}
-                    className={`p-4 rounded-3xl border text-center transition cursor-pointer flex flex-col justify-between h-28 ${
-                      isSelected
-                        ? 'bg-[#1e1e1e] text-white border-black shadow-md'
-                        : 'bg-white/80 border-[#edeae1] text-[#4f4c45] hover:bg-white'
-                    }`}
-                  >
-                    <div className={`text-xs ${isSelected ? 'text-white/70' : 'text-[#87837a]'}`}>{item.day}</div>
-                    <div className="text-2xl font-semibold">{item.num}</div>
-                    <div className="text-[10px]">
-                      {eventsOnDate.length > 0 ? (
-                        <span className={`px-2 py-0.5 rounded-full ${isSelected ? 'bg-amber-300 text-black font-semibold' : 'bg-amber-100 text-amber-900 font-medium'}`}>
-                          {eventsOnDate.length} {eventsOnDate.length === 1 ? 'Event' : 'Events'}
-                        </span>
-                      ) : (
-                        <span className="opacity-40">No event</span>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Selected Date Schedule */}
             <div className="bg-white/80 rounded-[32px] p-6 border border-[#ece7dc] shadow-xs">
               <h3 className="text-base font-semibold text-[#1c1a17] mb-4">
                 Schedule for {selectedCalendarDate}
@@ -1625,7 +1413,7 @@ export default function App() {
                 if (dayEvents.length === 0) {
                   return (
                     <div className="p-8 text-center bg-[#faf8f2] rounded-2xl border border-[#ede9dc]">
-                      <p className="text-xs text-[#7a766e]">No events scheduled for this day yet.</p>
+                      <p className="text-xs text-[#7a766e]">No events scheduled for this day.</p>
                       <button
                         onClick={() => {
                           setNewEvent((prev) => ({ ...prev, date: selectedCalendarDate }));
@@ -1646,18 +1434,12 @@ export default function App() {
                         key={ev.id}
                         className="p-4 rounded-2xl bg-[#f9f8f3] border border-[#ede9dc] flex flex-col md:flex-row md:items-center justify-between gap-4"
                       >
-                        <div className="flex items-start gap-4">
-                          <div className="w-20 text-center">
-                            <span className="text-xs font-bold text-[#1a1917] block">{ev.time.split('-')[0]}</span>
-                            <span className="text-[10px] text-[#7f7b73] block">{ev.category}</span>
+                        <div>
+                          <div className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 w-fit mb-1">
+                            {ev.club}
                           </div>
-                          <div>
-                            <div className="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 w-fit mb-1">
-                              {ev.club}
-                            </div>
-                            <h4 className="text-sm font-bold text-[#1a1917]">{ev.title}</h4>
-                            <p className="text-xs text-[#6e6a62] mt-0.5">{ev.venue} • {ev.registeredCount} Registered</p>
-                          </div>
+                          <h4 className="text-sm font-bold text-[#1a1917]">{ev.title}</h4>
+                          <p className="text-xs text-[#6e6a62] mt-0.5">{ev.time} • {ev.venue}</p>
                         </div>
 
                         <div className="flex items-center gap-2">
@@ -1706,7 +1488,7 @@ export default function App() {
                 <span className="text-sm font-bold text-[#1a1917]">
                   {reviews.length
                     ? (reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1)
-                    : '5.0'}
+                    : '0.0'}
                 </span>
                 <span className="text-[11px] text-[#807c74]">({reviews.length} Reviews)</span>
               </div>
@@ -1731,16 +1513,14 @@ export default function App() {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-[#3b3833] mb-1">Event</label>
-                    <select
+                    <label className="block text-xs font-semibold text-[#3b3833] mb-1">Event Name</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Hackathon or Cultural Fest"
                       value={newReviewForm.eventName}
                       onChange={(e) => setNewReviewForm({ ...newReviewForm, eventName: e.target.value })}
                       className="w-full px-3 py-2 rounded-xl bg-white border border-[#ded8cb] text-xs text-[#1e1d1a] focus:outline-none"
-                    >
-                      {events.map((ev) => (
-                        <option key={ev.id} value={ev.title}>{ev.title}</option>
-                      ))}
-                    </select>
+                    />
                   </div>
 
                   <div>
@@ -1830,11 +1610,6 @@ export default function App() {
                           <ThumbsUp className="w-3.5 h-3.5" />
                           <span>{r.likes} Helpful</span>
                         </button>
-
-                        <span className="text-[11px] text-emerald-700 font-medium flex items-center gap-1">
-                          <CheckCircle2 className="w-3 h-3" />
-                          Verified
-                        </span>
                       </div>
                     </div>
                   ))
@@ -1846,7 +1621,7 @@ export default function App() {
       </div>
 
       {/* ========================================================================= */}
-      {/* HOST NEW EVENT MODAL WITH PICTURE UPLOAD */}
+      {/* HOST NEW EVENT MODAL */}
       {/* ========================================================================= */}
       {showCreateModal && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200 overflow-y-auto">
@@ -1864,7 +1639,6 @@ export default function App() {
             </p>
 
             <form onSubmit={handleCreateEvent} className="space-y-4">
-              {/* Picture Upload Zone */}
               <div>
                 <label className="block text-xs font-semibold text-[#3b3833] mb-1">
                   Event Banner / Poster
@@ -1916,7 +1690,6 @@ export default function App() {
                 )}
               </div>
 
-              {/* Title */}
               <div>
                 <label className="block text-xs font-semibold text-[#3b3833] mb-1">Event Title *</label>
                 <input
@@ -1929,19 +1702,16 @@ export default function App() {
                 />
               </div>
 
-              {/* Club & Category */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-[#3b3833] mb-1">Organizing Club</label>
-                  <select
+                  <input
+                    type="text"
+                    placeholder="e.g. Computing Society"
                     value={newEvent.club}
                     onChange={(e) => setNewEvent({ ...newEvent, club: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl bg-white border border-[#ded8cb] text-xs text-[#1e1d1a] focus:outline-none focus:border-black"
-                  >
-                    {clubs.map((c) => (
-                      <option key={c.id} value={c.name}>{c.name}</option>
-                    ))}
-                  </select>
+                  />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-[#3b3833] mb-1">Category</label>
@@ -1958,7 +1728,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Date & Time */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-[#3b3833] mb-1">Date</label>
@@ -1982,26 +1751,22 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Venue & Capacity */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-semibold text-[#3b3833] mb-1">Venue</label>
-                  <select
+                  <input
+                    type="text"
+                    placeholder="e.g. Main Auditorium"
                     value={newEvent.venue}
                     onChange={(e) => setNewEvent({ ...newEvent, venue: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl bg-white border border-[#ded8cb] text-xs text-[#1e1d1a] focus:outline-none focus:border-black"
-                  >
-                    {venues.map((v) => (
-                      <option key={v.id} value={v.name}>{v.name}</option>
-                    ))}
-                  </select>
+                  />
                 </div>
                 <div>
                   <label className="block text-xs font-semibold text-[#3b3833] mb-1">Seat Capacity</label>
                   <input
                     type="number"
-                    min="10"
-                    max="2000"
+                    min="1"
                     value={newEvent.capacity}
                     onChange={(e) => setNewEvent({ ...newEvent, capacity: e.target.value })}
                     className="w-full px-3 py-2 rounded-xl bg-white border border-[#ded8cb] text-xs text-[#1e1d1a] focus:outline-none focus:border-black"
@@ -2009,7 +1774,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Budget Allocation */}
               <div>
                 <label className="block text-xs font-semibold text-[#3b3833] mb-1">Requested Budget ($)</label>
                 <input
@@ -2021,7 +1785,6 @@ export default function App() {
                 />
               </div>
 
-              {/* Description */}
               <div>
                 <label className="block text-xs font-semibold text-[#3b3833] mb-1">Description</label>
                 <textarea
@@ -2054,7 +1817,170 @@ export default function App() {
       )}
 
       {/* ========================================================================= */}
-      {/* REQUEST BUDGET ITEM MODAL */}
+      {/* ADD CLUB MODAL */}
+      {/* ========================================================================= */}
+      {showAddClubModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-[#fbf9f4] border border-[#ded9cd] rounded-[36px] max-w-md w-full p-6 shadow-2xl relative">
+            <button
+              onClick={() => setShowAddClubModal(false)}
+              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-[#f0ece2] border border-[#e2ddd0] flex items-center justify-center text-sm font-semibold text-[#555] hover:bg-black hover:text-white transition cursor-pointer"
+            >
+              ✕
+            </button>
+            <h2 className="text-xl font-bold text-[#1b1916] mb-1">Register Student Club</h2>
+            <p className="text-xs text-[#706c64] mb-4">Add a new society chapter to the college directory.</p>
+
+            <form onSubmit={handleAddClub} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-[#3b3833] mb-1">Club Name *</label>
+                <input
+                  required
+                  type="text"
+                  placeholder="e.g. Robotics Club"
+                  value={newClubForm.name}
+                  onChange={(e) => setNewClubForm({ ...newClubForm, name: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-[#ded8cb] text-xs focus:outline-none"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-[#3b3833] mb-1">Category</label>
+                  <select
+                    value={newClubForm.category}
+                    onChange={(e) => setNewClubForm({ ...newClubForm, category: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-white border border-[#ded8cb] text-xs focus:outline-none"
+                  >
+                    <option value="Technical">Technical</option>
+                    <option value="Cultural">Cultural</option>
+                    <option value="Business">Business</option>
+                    <option value="Literary">Literary</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-[#3b3833] mb-1">Lead Coordinator</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Alex Ray"
+                    value={newClubForm.leads}
+                    onChange={(e) => setNewClubForm({ ...newClubForm, leads: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-white border border-[#ded8cb] text-xs focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-[#3b3833] mb-1">Club Mission / Description</label>
+                <textarea
+                  rows={2}
+                  placeholder="What does your club do?"
+                  value={newClubForm.description}
+                  onChange={(e) => setNewClubForm({ ...newClubForm, description: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-[#ded8cb] text-xs focus:outline-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAddClubModal(false)}
+                  className="px-4 py-2 rounded-full border border-[#ded8cb] text-xs font-medium text-[#444] hover:bg-[#f0ece2] transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-full bg-[#1b1916] hover:bg-black text-white text-xs font-semibold"
+                >
+                  Register Club
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* ADD VENUE MODAL */}
+      {/* ========================================================================= */}
+      {showAddVenueModal && (
+        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-[#fbf9f4] border border-[#ded9cd] rounded-[36px] max-w-md w-full p-6 shadow-2xl relative">
+            <button
+              onClick={() => setShowAddVenueModal(false)}
+              className="absolute top-5 right-5 w-8 h-8 rounded-full bg-[#f0ece2] border border-[#e2ddd0] flex items-center justify-center text-sm font-semibold text-[#555] hover:bg-black hover:text-white transition cursor-pointer"
+            >
+              ✕
+            </button>
+            <h2 className="text-xl font-bold text-[#1b1916] mb-1">Add Campus Venue</h2>
+            <p className="text-xs text-[#706c64] mb-4">Register an auditorium or conference hall.</p>
+
+            <form onSubmit={handleAddVenue} className="space-y-4">
+              <div>
+                <label className="block text-xs font-semibold text-[#3b3833] mb-1">Venue Name *</label>
+                <input
+                  required
+                  type="text"
+                  placeholder="e.g. Main Auditorium & Labs"
+                  value={newVenueForm.name}
+                  onChange={(e) => setNewVenueForm({ ...newVenueForm, name: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-[#ded8cb] text-xs focus:outline-none"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-semibold text-[#3b3833] mb-1">Type</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Indoor Stage"
+                    value={newVenueForm.type}
+                    onChange={(e) => setNewVenueForm({ ...newVenueForm, type: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-white border border-[#ded8cb] text-xs focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-[#3b3833] mb-1">Capacity</label>
+                  <input
+                    type="number"
+                    min="10"
+                    value={newVenueForm.capacity}
+                    onChange={(e) => setNewVenueForm({ ...newVenueForm, capacity: e.target.value })}
+                    className="w-full px-3 py-2 rounded-xl bg-white border border-[#ded8cb] text-xs focus:outline-none"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-[#3b3833] mb-1">Facilities (comma-separated)</label>
+                <input
+                  type="text"
+                  placeholder="4K Projector, Surround Sound, AC"
+                  value={newVenueForm.facilities}
+                  onChange={(e) => setNewVenueForm({ ...newVenueForm, facilities: e.target.value })}
+                  className="w-full px-3 py-2 rounded-xl bg-white border border-[#ded8cb] text-xs focus:outline-none"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-3 pt-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAddVenueModal(false)}
+                  className="px-4 py-2 rounded-full border border-[#ded8cb] text-xs font-medium text-[#444] hover:bg-[#f0ece2] transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-full bg-[#1b1916] hover:bg-black text-white text-xs font-semibold"
+                >
+                  Add Venue
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* REQUEST BUDGET MODAL */}
       {/* ========================================================================= */}
       {showAddBudgetItemModal && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
@@ -2065,7 +1991,6 @@ export default function App() {
             >
               ✕
             </button>
-
             <h2 className="text-xl font-bold text-[#1b1916] mb-1">Request Budget Allocation</h2>
             <p className="text-xs text-[#706c64] mb-4">Submit a budget requisition to the student council.</p>
 
@@ -2084,15 +2009,13 @@ export default function App() {
 
               <div>
                 <label className="block text-xs font-semibold text-[#3b3833] mb-1">Club / Society</label>
-                <select
+                <input
+                  type="text"
+                  placeholder="e.g. Computing Society"
                   value={newBudgetItem.club}
                   onChange={(e) => setNewBudgetItem({ ...newBudgetItem, club: e.target.value })}
                   className="w-full px-3 py-2 rounded-xl bg-white border border-[#ded8cb] text-xs text-[#1e1d1a] focus:outline-none"
-                >
-                  {clubs.map((c) => (
-                    <option key={c.id} value={c.name}>{c.name}</option>
-                  ))}
-                </select>
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -2190,7 +2113,7 @@ export default function App() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-3 border-t border-[#ede9dc]">
+            <div className="flex items-center justify-between pt-3 border-t border-[#ede9de]">
               <div>
                 <span className="text-xs text-[#736f66]">Capacity: </span>
                 <span className="text-xs font-semibold text-[#1e1e1e]">
